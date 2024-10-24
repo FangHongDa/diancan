@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.diancan.mapper.EchartsMapper">
+
+    <resultMap id="productResultMap" type="Product" autoMapping="true">
+        <id column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="productResultMap">
+        select  * from product_p;
+    </select>
+
+    <select id="findAllAddr" resultType="OrderAddressCountVO">
+      select b.address_info,count(*) count from `order_p` a
+      left join user_info_p b on a.user_id = b.user_id
+      group by b.address_info
+    </select>
+
+    <select id="findAllOrderStatus" resultType="OrderStatusCountVO">
+        select order_status ,count(*) count from order_p group by order_status
+    </select>
+
+</mapper>

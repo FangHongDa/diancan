@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.diancan.mapper.LeaveMapper">
+
+	<resultMap id="leaveResultMap" type="Leave"  autoMapping="true">
+		<id column="id" property="id"/>
+		<id column="userId" property="user_id"/>
+		<id column="content" property="content"/>
+<!-- 		id,user_id,content,leave_date,answer_content,answer_date,status
+ -->		<id column="leaveDate" property="leave_date"/>
+		<id column="answerContent" property="answer_content"/>
+		<id column="answerDate" property="answer_date"/>
+		<id column="status" property="status"/>
+		<association property="user" javaType="User" resultMap="userResultMap"/>
+	</resultMap>
+	<resultMap id="userResultMap" type="User"  autoMapping="true">
+		<id column="id" property="id"/>
+	</resultMap>
+
+	<select id="findAllLeaveList" resultMap="leaveResultMap">
+    	select a.*,b.username from leave_p a left join user_p b
+    	on a.user_id = b.id
+	 </select>
+
+	<delete id="deleteById">
+		delete  from
+		leave_p
+		where
+		id=#{leaveId}
+
+	</delete>
+
+	<delete id="deleteAll">
+		delete from leave_p	where
+		id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+
+	</delete>
+
+	<update id="updateAll">
+	update leave_p set status=#{status} where
+		id  in
+		<foreach collection="leaveIds" open="(" close=")" separator="," item="leaveId">
+			#{leaveId}
+		</foreach>
+	</update>
+	<update id="updateStateOnlyOne">
+		update leave_p set status = #{status} where id = #{leaveId}
+
+	</update>
+
+	<select id="findConditionLeaveList" resultMap="leaveResultMap">
+		select * from leave_p a	left join user_p b on a.user_id = b.id
+		where b.username like concat('%',#{userName},'%')
+	</select>
+   
+	<insert id="createLeave">
+  	insert  into  leave_p(id,user_id,content,leave_date,answer_content,answer_date,status) values (
+			#{id},
+			#{userId},
+			#{content},
+			#{leaveDate},
+			#{answerContent},
+			#{answerDate},
+			#{status}
+		)
+	</insert>
+	
+</mapper>

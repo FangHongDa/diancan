@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.diancan.mapper.UserMapper">
+
+    <resultMap id="userResultMap" type="User" autoMapping="true">
+        <id column="id  " property="id"/>
+        <result column="username" property="userName"/>
+        <result column="password" property="password"/>
+        <result column="role_id" property="roleId"/>
+        <association property="userInfo" resultMap="userInfoResultMap"></association>
+    </resultMap>
+    <resultMap id="userInfoResultMap" type="UserInfo" autoMapping="true">
+         <id column="id" property="id"/>
+         <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <select id="findUserInfo" parameterType="java.lang.Integer" resultMap="userResultMap">
+        select * from user_p a
+        left join user_info_p b on a.id = b.user_id  where a.id =#{id,jdbcType=INTEGER}
+    </select>
+    <update id="updateAddress">
+        update user_info_p set
+        address_info = #{addressInfo},
+        real_name = #{realName},
+        telephone = #{telephone},
+        zip_code = #{zipCode}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updatePwd">
+        /*update user_p set password = #{comfirmPwd}*/
+    </update>
+
+    <update id="updateTel">
+        /*update user_info_p set telephone = #{newTel} where user_info_id = #{userId}*/
+    </update>
+
+    <update id="deleteTel">
+        /*update user_info_p set telephone = "" where user_info_id = #{userId}*/
+    </update>
+
+    <update id="updateEmail">
+       /* update user_info_p set email = #{newEmail} where user_info_id = #{userId}*/
+    </update>
+
+    <!-- 根据用户信息查找用户 -->
+    <select id="findUserByUserId" parameterType="User" resultMap="userResultMap">
+        select * from user_p a
+    	left join user_info_p b
+	    on a.id=b.user_id where a.id=#{user.id,jdbcType=INTEGER}
+    </select>
+    <!-- 根据用户表 -->
+    <update id="updateUser">
+      <!--  update user_p
+        <set>
+            <if test="username != null">username=#{username},</if>
+            <if test="password != null">password=#{password},</if>
+        </set>
+        where user_id=#{userId}-->
+    </update>
+
+    <!-- 查询所有的管理员 -->
+    <select id="findAdminList" resultMap="userResultMap">
+       /* select * from user_p left join
+        (select * from user_info_p left join
+        (select urp.user_id,urp.role_id,r.role_name from user_role_p urp left join
+        (select * from role_p where role_name='超级管理员' or role_name='普通管理员')r
+        on urp.role_id = r.role_id)u
+        on user_info_id = u.user_id)uip
+        on user_p.user_id=uip.user_id  where user_p.user_id=uip.user_id*/
+    </select>
+
+    <select id="findAdminRole" resultType="string">
+        /*select role_name from role_p where role_id in (
+        select role_id from user_role_p where user_id=#{userId}
+        )*/
+    </select>
+
+    <insert id="addUser">
+       /* insert into user_p values(#{userId}, #{username}, #{password})*/
+    </insert>
+
+    <delete id="deleteAdminsById">
+       <!-- delete from user_p where user_id in (
+        <foreach collection="array" item="id" separator=",">
+            #{id}
+        </foreach>
+        )-->
+    </delete>
+
+
+    <select id="findUserByUsername" resultMap="userResultMap">
+        select * from user_p a left join
+        user_info_p b on a.username like concat('%',#{userName},'%')
+        where a.id = b.user_id
+    </select>
+
+    <delete id="deleteUserById">
+        delete from user_p where id = #{userId}
+    </delete>
+
+    <select id="findUserByU_P" resultType="User">
+        select * from user_p where username=#{userName} and password=#{password}
+    </select>
+
+
+    <select id="finuserByUsername" resultType="User">
+        SELECT * from user_p
+        where username=#{username}
+    </select>
+
+    <insert id="registerUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user_p(username,password,role_id,status) values(#{userName},#{password},#{roleId},#{status})
+    </insert>
+
+
+
+    <insert id="registerUserInfo">
+       insert into user_info_p(user_id,real_name,telephone,email)
+        values (
+        #{userId},
+        #{realName},
+        #{telephone},
+        #{email}
+        )
+    </insert>
+
+    <select id="findAllUser" resultMap="userResultMap">
+        select a.*,b.*,c.`id` role_id from user_p a
+        left join user_info_p b on a.id=b.user_id
+        left join role_p c on a.role_id = c.id
+    </select>
+</mapper>

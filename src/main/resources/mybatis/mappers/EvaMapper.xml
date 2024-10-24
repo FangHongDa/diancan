@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.diancan.mapper.EvaMapper">
+
+	<resultMap id="EvaluateResultMap"  type="Evaluate" autoMapping="true">
+		<id column="id" property="id"/>
+		<result column="order_id" property="orderId"/>
+		<result column="evaluate_content" property="evaluateContent"/>
+		<result column="evaluate_date" property="evaluateDate"/>
+		<result column="answer_content" property="answerContent"/>
+		<result column="answer_date" property="answerDate"/>
+		<result column="status" property="status"/>
+	</resultMap>
+
+
+	<select id="findAllEvaList" resultMap="EvaluateResultMap">
+	  select * from evaluate_p
+	 </select>
+
+	<insert id="saveEva">
+  	insert  into  evaluate_p(order_id,evaluate_content,evaluate_date,status) values (
+			#{orderId},
+			#{evaluateContent},
+			#{evaluateDate},
+			#{status}
+		)
+	</insert>
+	<select id="findEvaListByOrderId" resultMap="EvaluateResultMap">
+		/*SELECT  * from evaluate_p where order_id = #{orderId}*/
+	</select>
+	<update id="saveAnsEva">
+		/*update evaluate_p SET ans_content = #{ansContent},ans_Date = #{ansDate} where order_id = #{orderId}*/
+	</update>
+	<select id="find2Eva" resultMap="EvaluateResultMap">
+		select * from  evaluate_p limit 3
+	</select>
+</mapper>

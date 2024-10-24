@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--保证接口和映射文件一一对应  -->
+<mapper namespace="com.ms.diancan.mapper.OrderMapper">
+
+    <resultMap id="orderResultMap" type="Order">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_date" property="orderDate"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="user_id" property="userId"/>
+        <result column="money" property="money"/>
+        <association property="user" javaType="User" resultMap="userResultMap"></association>
+        <association property="userInfo" javaType="UserInfo" resultMap="userInfoResultMap"></association>
+        <collection property="productOrders" ofType="com.ms.diancan.entity.ProductOrder">
+            <result column="order_id" property="orderId"/>
+            <result column="product_id" property="productId"/>
+            <result column="buy_num" property="buyNum"/>
+            <association property="product" javaType="Product" resultMap="productResultMap"></association>
+        </collection>
+    </resultMap>
+    <resultMap id="userResultMap" type="User">
+        <id column="id" property="id"/>
+        <result column="username" property="userName"/>
+        <result column="password" property="password"/>
+        <result column="role_id" property="roleId"/>
+    </resultMap>
+
+    <resultMap id="userInfoResultMap" type="UserInfo">
+        <result column="real_name" property="realName"/>
+        <result column="telephone" property="telephone"/>
+        <result column="email" property="email"/>
+        <result column="address_info" property="addressInfo"/>
+        <result column="zip_code" property="zipCode"/>
+    </resultMap>
+
+    <resultMap id="productResultMap" type="Product" autoMapping="true">
+        <id column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+    </resultMap>
+
+    <select id="findOrderListByUserId" resultMap="orderResultMap">
+        select a.*,b.*,c.* from order_p a
+        left join  product_order_p b on b.order_id = a.order_id
+        left join product_p c on b.product_id = c.id
+        where a.user_id = #{id}
+    </select>
+
+    <select id="findOrderAll" resultMap="orderResultMap">
+        select a.*,b.*,c.*,d.* from order_p a
+        left join  product_order_p b on b.order_id = a.order_id
+        left join product_p c on b.product_id = c.id
+		left join user_info_p d on a.user_id = d.user_id
+    </select>
+    <select id="findOrderTotal" resultType="Integer">
+        select count(*) from order_p;
+    </select>
+
+    <select id="findListByOrderId" resultMap="orderResultMap">
+        select a.*,b.*,c.*,d.* from order_p a
+        left join  product_order_p b on b.order_id = a.order_id
+        left join product_p c on b.product_id = c.id
+		left join user_info_p d on a.user_id = d.user_id
+        where a.order_id = #{orderId}
+    </select>
+
+    <insert id="saveToProductOrder">
+        insert into product_order_p(order_id,product_id,buy_num)
+        values(
+        #{orderId},
+        #{productId},
+        #{buyNum}
+        )
+    </insert>
+
+    <select id="findProductByOrderId" resultMap="productResultMap">
+        select * from product_order_p where order_id = #{orderId}
+    </select>
+
+    <insert id="saveOrder">
+       insert into order_p(
+       order_id,order_date,order_status,user_id,money
+       )
+       values(#{orderId},#{orderDate},#{orderStatus},#{userId},#{money}
+        )
+    </insert>
+    <update id="updateOrderStatus">
+        update order_p set order_status = #{status} where order_id = #{orderId}
+    </update>
+
+
+    <delete id="deleteOrder">
+        delete from order_p where order_id = #{orderid}
+    </delete>
+    <delete id="deleteProductOrder">
+        delete  from product_order_p where order_id = #{orderid}
+    </delete>
+
+    <update id="updateProductNum">
+        /*update product_p set buy_count = buy_count - #{buyCount}*/
+    </update>
+
+    <select id="findOrderByStatus" resultMap="orderResultMap">
+        select a.*,b.*,c.*,d.* from order_p a
+        left join  product_order_p b on b.order_id = a.order_id
+        left join product_p c on b.product_id = c.id
+		left join user_info_p d on a.user_id = d.user_id
+		where a.order_status=#{status}
+    </select>
+
+
+    <!-- 条件查询 导出excel表格-->
+    <resultMap id="OrderExcelExportVOResultMap" type="com.ms.diancan.entity.vo.OrderExcelExportVO"></resultMap>
+
+    <select id="find4ExcelDown" resultMap="OrderExcelExportVOResultMap">
+        select a.id,a.order_id,a.money,a.user_id,c.address_info,a.order_date,a.order_status status from order_p a
+        left join user_info_p c on a.user_id=c.user_id
+    </select>
+
+</mapper>

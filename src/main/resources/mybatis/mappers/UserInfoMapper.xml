@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ms.diancan.mapper.UserInfoMapper">
+<update id="updateUser">
+   <!-- update user_info_p
+    <set>
+        <if test="realName != null">real_name=#{realName},</if>
+        <if test="telephone != null">telephone=#{telephone},</if>
+        <if test="email != null">email=#{email},</if>
+        <if test="address != null">address=#{address}</if>
+    </set>
+    where user_info_id = #{userInfoId}-->
+</update>
+
+    <insert id="addUser">
+       /* insert into user_info_p values(#{userInfoId}, #{realName}, #{telephone}, #{email},#{state}, null, null, null)*/
+    </insert>
+
+    <delete id="deleteAdminsById">
+       <!-- delete from user_info_p where user_info_id in (
+          <foreach collection="array" item="id" separator=",">
+                #{id}
+          </foreach>
+        )-->
+    </delete>
+
+    <update id="updateUserState">
+        update user_p
+        <set>
+          status=#{status}
+        </set>
+        where id=#{userId}
+    </update>
+
+    <delete id="deleteUserById">
+        delete from user_info_p where user_id=#{userId}
+    </delete>
+
+    <select id="findAdressByUserId" parameterType="java.lang.String" resultType="UserInfo">
+      select address_info from user_info_p where user_id = #{userId}
+    </select>
+</mapper>

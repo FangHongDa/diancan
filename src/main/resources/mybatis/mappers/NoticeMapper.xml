@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--保证接口和映射文件一一对应  -->
+<mapper namespace="com.ms.diancan.mapper.NoticeMapper">
+
+	<select id="findAll" resultType="Notice">
+		select * from  notice
+	</select>
+
+	<delete id="deleteNotices">
+		delete from notice where id in (
+		<foreach collection="array" item="id" separator=",">#{id}</foreach>
+		)
+	</delete>
+
+	<insert id="addNotice">
+		insert into notice(title,content,notice_date,status)
+		values(#{title},#{content},#{noticeDate},#{status})
+	</insert>
+
+	<insert id="updateStatus">
+		update notice set status = #{status}
+		where id  in
+		<foreach collection="noticeIds" item="id" separator="," open="("  close=")" >#{id}</foreach>
+	</insert>
+
+	<update id="updateNotice">
+		update notice set
+			title=#{title},
+			content=#{content},
+			notice_date=#{noticeDate},
+			status=#{status}
+			where id=#{id}
+	</update>
+</mapper>

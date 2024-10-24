@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.diancan.mapper.ProductMapper">
+
+	<resultMap type="Product" id="productResultMap" autoMapping="true">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="status" property="status"/>
+		<association property="productKind" javaType="ProductKind" resultMap="productKindResultMap"></association>
+	</resultMap>
+	<resultMap id="productKindResultMap" type="ProductKind">
+		<id column="id" property="id"/>
+		<result column="kind_name" property="kindName"/>
+	</resultMap>
+
+    <select id="findAllProductList" resultMap="productResultMap">
+		select * from product_p a left join product_kind_p b on a.product_kind_id=b.id
+	</select>
+
+	<select id="findAllProductListByStatus" resultMap="productResultMap">
+		select * from product_p a left join product_kind_p b on a.product_kind_id=b.id
+		where a.`status`= #{status}
+	</select>
+
+    <select id="findAllProductKindNameList" resultMap="productKindResultMap">
+		select * from  product_kind_p
+	</select>
+
+    <select id="findHotProductList" resultMap="productResultMap">
+		select a.*,b.kind_name from product_p a
+		left join product_kind_p b on a.product_kind_id = b.id
+		right join product_banner_p c on a.id = c.product_id limit 2
+	</select>
+
+    <select id="findProductByCondition" resultMap="productResultMap">
+		SELECT * from product_p a LEFT JOIN product_kind_p b on a.product_kind_id=b.id
+		where 1=1
+		<if test="product_name !=null">
+			and a.product_name like CONCAT('%',#{product_name},'%' )
+		</if>
+		<if test="name !=null">
+			and b.kind_name like CONCAT('%',#{name},'%' )
+		</if>
+		<if test="minprice !=null">
+			and a.price &gt;= #{minprice}
+		</if>
+		<if test="maxprice !=null">
+			and a.price &lt;= #{maxprice}
+		</if>
+
+	</select>
+<!--    <select id="searchByConditition" resultMap="productResultMap">
+		/*select * from product_p where
+			 product_name LIKE CONCAT('%',#{keyword},'%')*/
+	</select>-->
+    <select id="findProductByCategory" resultMap="productResultMap">
+		select p.*,pk.kind_name from product_p p left join product_kind_p pk on p.product_kind_id = pk.id
+		WHERE pk.id = #{kindId}
+	</select>
+
+    <select id="findProductById" resultType="Product">
+		select * from product_p where id = #{id}
+	</select>
+
+    <select id="findProductsById" resultType="Product">
+        select * from product_p where id in (
+        <foreach collection="array" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+    <select id="findCardProductsById" resultType="Product">
+		select * from product_p
+	</select>
+
+
+    <select id="findThreeProductList" resultMap="productResultMap">
+		select a.*, b.kind_name from  product_p a
+		left join product_kind_p b
+		on a.product_kind_id = b.id
+		order by a.`buy_count` desc limit 0, 3
+	</select>
+
+
+    <!--批量删除-->
+    <delete id="deleteAllProduct">
+       delete from product_p
+        where
+        id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <!--修改单个商品-->
+    <update id="updateOne">
+		update product_p
+		set
+		<if test="productName  !=  null and productName  !=  ''">
+			product_name=#{productName},
+		</if>
+		<if test="price != null">
+			price=#{price},
+		</if>
+		<if test="vprice != null">
+			vprice=#{vprice},
+		</if>
+		<if test="imageUrl !=  null and imageUrl  !=  ''">
+			image_url=#{imageUrl},
+		</if>
+		<if test="description  !=  null and description  !=  ''">
+			description=#{description},
+		</if>
+		<if test="productKindId  !=  null">
+			product_kind_id = #{productKindId}
+		</if>
+		<if test="buyCount != null">
+			buy_count = #{buyCount}
+		</if>
+		where
+		id=#{id}
+	</update>
+
+	<update id="updateBuyCount">
+	update product_p
+		set buy_count =buy_count + #{buyMount} where id=#{id}
+	</update>
+
+    <insert id="addOne">
+		insert
+		into product_p
+		(description,image_url,product_name,price,vprice,product_kind_id,status)
+		values
+		(
+		#{description},
+		#{imageUrl},
+		#{productName},
+		#{price},
+		#{vprice},
+		#{productKindId},
+		#{status}
+		)
+	</insert>
+
+    <delete id="deleteById">
+		delete from product_p where id=#{id}
+	</delete>
+
+
+    <select id="findAllKind" resultType="ProductKind">
+		SELECT  * from product_kind_p
+	</select>
+
+
+    <select id="findAllProductCondition" resultMap="productResultMap">
+		select a.*,b.kind_name from product_p a
+		left join product_kind_p b on a.product_kind_id = b.id
+		where
+		a.product_name like concat('%',#{pname},'%')
+	</select>
+
+	<update id="updateProductStatusById">
+		update product_p a  set a.status= #{status} where id =#{id}
+	</update>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<resultMap type="ProductBanner" id="productBannerResultMap" autoMapping="true">
+		<id column="id" property="id"/>
+		<result column="product_id" property="productId"/>
+		<result column="status" property="status"/>
+		<association property="product" javaType="Product" resultMap="productResultMap"></association>
+	</resultMap>
+
+	<select id="findAllProductBanner" resultMap="productBannerResultMap">
+		select a.*,b.product_name,b.image_url from product_banner_p a
+		left join product_p b on a.product_id=b.id
+	</select>
+
+	<select id="findProductBannerByCount" resultMap="productBannerResultMap">
+		select a.*,b.product_name,b.image_url from product_banner_p a
+		left join product_p b on a.product_id=b.id ORDER BY RAND() LIMIT #{count}
+	</select>
+
+	<insert id="addNewProductBanner" parameterType="ProductBanner">
+		insert into product_banner_p(product_id,`status`) VALUES(#{productId},#{status})
+	</insert>
+
+	<delete id="deleteProductBanner" >
+		delete from product_banner_p where id=#{id}
+	</delete>
+
+	<select id="findProductBannerById" resultMap="productBannerResultMap">
+		select * from product_banner_p where id = #{id}
+	</select>
+
+	<update id="updateProductBanner" parameterType="ProductBanner">
+		update product_banner_p set `status`= #{status} where id = #{id}
+	</update>
+
+	<select id="findProductBannerByProductId" resultMap="productBannerResultMap">
+		select * from product_banner_p where product_id = #{productId}
+	</select>
+</mapper>

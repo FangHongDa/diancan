@@ -1,0 +1,26 @@
+.main-container{
+    background-color: rgba(255,255,255,0.5);
+    height: 640px;
+}
+.intr-logo img{
+    border-radius: 50%;
+    width: 150px;
+    margin-top: 50px;
+}
+.intr-word{
+    font-size: 25px;
+    margin-top: 50px;
+    line-height: 2em;
+}
+.main-skills{
+    background-color: rgba(50,50,50,0.9);
+    height: 600px;
+    color: #ffffff;
+    padding-top: 30px;
+}
+.main-skills h2{
+    margin-top: 0;
+}
+.main-skills p{
+    font-size: 20px;
+}

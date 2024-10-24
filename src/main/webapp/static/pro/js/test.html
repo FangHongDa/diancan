@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-1.4.2.js"></script>
+    <script>
+      $(function(){
+          $('#submit').click(function (e) {
+              e.preventDefault();
+              var content = $('#textarea').val();  //获取输入框的值
+              alert(content);
+              if (!content) {  //判断是否有值
+                  layer.alert('请输入提交内容!');
+                  return false; //无值则不提交
+              } else {
+                  $.ajax({
+                      type: "POST",  //请求方式
+                      url: createLeave,//设置后台接口
+                      data: {content: content}, //加密文本字符串
+                      timeout: 3000, //请求延时
+                      error: function () { //提交失败
+                          layer.alert('服务器繁忙,请稍后重试!');
+                      },
+                  });
+              }
+          });
+      });
+    </script>
+</head>
+<body>
+<textarea id="textarea" name="content" cols="20" rows="10"></textarea>
+<button id="submit" value="提交"/>
+</body>
+</html>

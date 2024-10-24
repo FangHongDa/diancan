@@ -1,0 +1,92 @@
+#nav{
+    margin-bottom: 0px;
+}
+#slider-left{
+    margin-top:2px;
+}
+.li-top{
+    margin:20px;
+}
+#cldFrame{
+    height: 240px;
+    width: 200px;
+    text-align: center;
+    margin: 0 auto;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+#cldBody{
+    padding: 10px;
+    width: 200px;
+    color: black;
+}
+#top{
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+}
+#topDate{
+    font-size: 15px;
+}
+.curDate{
+    color: red;
+    font-weight: bold;
+}
+
+#left:hover, #right:hover{
+    background-color: rgba(30, 30, 30, 0.2);
+}
+.date-box{
+    text-align: center;
+    margin-top: 30px;
+}
+#slider-left{
+        width:235px;
+        height:650px;
+        position:absolute;
+    }
+@media (min-width:768px) {
+    #slider-left{
+        width:235px;
+        height:650px;
+        position:absolute;
+    }
+   .page_main{
+        margin-left:236px;
+    }
+}
+.page_main{
+    background-color: #ecf0f5;
+    padding: 15px;
+}
+.time{
+    font-size: 8px;
+    color: #666;
+    display: inline-block;
+}
+.box{
+    /*background-color: #FFFFFF;*/
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+}
+#table{
+    table-layout: fixed;
+}
+#table th{
+    text-align: center;
+}
+
+#table td{
+    max-width: 58px;
+    height: 35px;
+    line-height: 35px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+#table td:hover {
+overflow: auto;
+white-space: pre-wrap;
+}
